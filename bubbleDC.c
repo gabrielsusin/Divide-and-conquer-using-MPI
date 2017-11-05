@@ -1,3 +1,10 @@
+/*-----------------------------------------------------------------------------
+PONTIFÍCIA UNIVERSIDADE CATÓLICA DO RIO GRANDE DO SUL
+PROGRAMAÇÃO PARALELA E DISTRIBUIDA - ENGENHARIA DE COMPUTAÇÃO
+Gabriel Fasoli Susin - gabriel.susin@acad.pucrs.br
+Augusto Bergamin - augusto.bergamin@acad.pucrs.br
+------------------------------------------------------------------------------*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
