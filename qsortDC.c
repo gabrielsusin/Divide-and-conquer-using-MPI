@@ -12,10 +12,6 @@ Augusto Bergamin - augusto.bergamin@acad.pucrs.br
 
 #define SEND 1
 
-#define VETOR_SIZE 100
-#define DELTA 30
-
-
 int *interleaving(int vetor[], int tam)
 {
 	int *vetor_auxiliar;
@@ -23,7 +19,7 @@ int *interleaving(int vetor[], int tam)
 
 	vetor_auxiliar = (int *)malloc(sizeof(int) * tam);
 
-	i1 = 0;
+	i1 = ;
 	i2 = tam / 2;
 
 	for (i_aux = 0; i_aux < tam; i_aux++) {
@@ -58,56 +54,77 @@ int cmpfunc (const void * a, const void * b) {
 
 int my_father(int my_rank){
     if(my_rank%2==0) return ((my_rank-2)/2);
-    else return ((my_rank-1)/2); 
+    else return ((my_rank-1)/2);
 }
 
-int main(int argc, char** argv){
-    int tam_vetor, my_rank, probe;
-    int *vetor_aux; 
+int main(int argc, char** argv)
+{
+    int my_rank, proc_n;
+	int delta=25000 ,tam_vetor=100000;
+	double t1,t2;
+    int *vetor_aux;
     int *vetor;
     MPI_Status status;
     MPI_Init(&argc , &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+	MPI_Comm_size(MPI_COMM_WORLD, &proc_n);
 
-    if ( my_rank != 0 )
+	int i;
+	for(i=0; i<argc; i++)
+	{
+		if(!strcmp(argv[i],"-delta"))
+		{
+			delta = atoi(argv[i+1]);
+			i++;
+		}
+		if(!strcmp(argv[i],"-size"))
+		{
+			tam_vetor = atoi(argv[i+1]);
+			i++;
+		}
+	}
+
+    if (my_rank != 0)
     {
-    MPI_Probe(my_father(my_rank), MPI_ANY_TAG, MPI_COMM_WORLD, &status); 
-    MPI_Get_count(&status, MPI_INT, &tam_vetor);  //descubro o tamanho da mensagem a ser recebida
-    vetor = malloc (tam_vetor*sizeof(int)); //aloco um vetor com este tamanho
-    MPI_Recv (vetor, tam_vetor, MPI_INT, my_father(my_rank), MPI_ANY_TAG, MPI_COMM_WORLD, &status); // recebo o vetor
+    	MPI_Probe(my_father(my_rank), MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+    	MPI_Get_count(&status, MPI_INT, &tam_vetor);  //descubro o tamanho da mensagem a ser recebida
+    	vetor = malloc (tam_vetor*sizeof(int)); //aloco um vetor com este tamanho
+    	MPI_Recv (vetor, tam_vetor, MPI_INT, my_father(my_rank), MPI_ANY_TAG, MPI_COMM_WORLD, &status); // recebo o vetor
     }
     else
     {
-    tam_vetor = VETOR_SIZE; // defino tamanho inicial do vetor
-    vetor = malloc (tam_vetor*sizeof(int)); //aloco este vetor
-    Inicializa (vetor, tam_vetor );// preencho o vetor de fora decrescente
+    	vetor = malloc (tam_vetor*sizeof(int)); //aloco este vetor
+    	Inicializa (vetor, tam_vetor );// preencho o vetor de fora decrescente
+		t1 = MPI_Wtime();
     }
 
     // dividir ou conquistar?
 
-    if ( tam_vetor <= DELTA )qsort(vetor,tam_vetor, sizeof(int), cmpfunc);//conquisto ordedando o vetor
+    if ( tam_vetor <= delta )
+		qsort(vetor,tam_vetor, sizeof(int), cmpfunc);//conquisto ordedando o vetor
     else
         {
-        MPI_Send (&vetor[0], tam_vetor/2,MPI_INT ,(my_rank*2)+1, SEND, MPI_COMM_WORLD );  // mando metade inicial do vetor
-        MPI_Send (&vetor[tam_vetor/2], tam_vetor/2, MPI_INT, (my_rank*2)+2, SEND, MPI_COMM_WORLD);  // mando metade final 
+        	MPI_Send (&vetor[0], tam_vetor/2,MPI_INT ,(my_rank*2)+1, SEND, MPI_COMM_WORLD );  // mando metade inicial do vetor
+        	MPI_Send (&vetor[tam_vetor/2], tam_vetor/2, MPI_INT, (my_rank*2)+2, SEND, MPI_COMM_WORLD);  // mando metade final
 
-        MPI_Recv (&vetor[0],tam_vetor/2 ,MPI_INT,(my_rank*2)+1,MPI_ANY_TAG,MPI_COMM_WORLD, &status);//recebo metade do vetor          
-        MPI_Recv (&vetor[tam_vetor/2],tam_vetor/2,MPI_INT, (my_rank*2)+2,MPI_ANY_TAG,MPI_COMM_WORLD, &status);//recebo o resto
-       
-        vetor_aux = malloc(tam_vetor*sizeof(int)); //aloco um vetor auxiliar
-        vetor_aux = interleaving(vetor, tam_vetor); //intercalo este
-        vetor = vetor_aux;
-        //free(vetor_aux);
+        	MPI_Recv (&vetor[0],tam_vetor/2 ,MPI_INT,(my_rank*2)+1,MPI_ANY_TAG,MPI_COMM_WORLD, &status);//recebo metade do vetor
+        	MPI_Recv (&vetor[tam_vetor/2],tam_vetor/2,MPI_INT, (my_rank*2)+2,MPI_ANY_TAG,MPI_COMM_WORLD, &status);//recebo o resto
+
+        	vetor_aux = malloc(tam_vetor*sizeof(int)); //aloco um vetor auxiliar
+        	vetor_aux = interleaving(vetor, tam_vetor); //intercalo este
+        	vetor = vetor_aux;
         }
 
     // mando para o pai
-    if ( my_rank !=0 )MPI_Send (vetor,tam_vetor,MPI_INT,my_father(my_rank),SEND, MPI_COMM_WORLD);//mando meu vetor para o pai
-    else{
-        printfv(vetor,100); // pai imprime o vetor
-        //free(vetor);
-        printf("DONE");}
-    
-    free(vetor_aux);
+    if( my_rank !=0 )
+		MPI_Send (vetor,tam_vetor,MPI_INT,my_father(my_rank),SEND, MPI_COMM_WORLD);//mando meu vetor para o pai
+    else
+	{
+		t2 = MPI_Wtime();
+		printf("Run time: %lf\n", t2-t1);
+	}
+
+	free(vetor);
     MPI_Finalize();
     return 0;
-    }
+}
