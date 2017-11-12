@@ -108,7 +108,7 @@ int my_father(int my_rank){
 }
 
 int main(int argc, char** argv){
-    int my_rank, proc_n;
+    int my_rank, proc_n, debug=0;
     int delta=25000 ,tam_vetor=100000;
     double t1,t2;
     int *vetor;
@@ -130,6 +130,8 @@ int main(int argc, char** argv){
 			tam_vetor = atoi(argv[i+1]);
 			i++;
 		}
+        if(!strcmp(argv[i],"-d"))
+            debug = 1;
 	}
 
     if ( my_rank != 0 )
@@ -158,6 +160,8 @@ int main(int argc, char** argv){
         job1_sz = (tam_vetor-my_job_sz)/2;
         job2_sz = tam_vetor - (my_job_sz+job1_sz);
 
+        if(debug) printf("M %d J1 %d J2 %d\n", my_job_sz, job1_sz, job2_sz);
+
         my_job = malloc(my_job_sz*sizeof(int));
         job1 = malloc(job1_sz*sizeof(int));
         job2 = malloc(job2_sz*sizeof(int));
@@ -185,7 +189,7 @@ int main(int argc, char** argv){
     else
     {
         t2 = MPI_Wtime();
-        //printfv(vetor,tam_vetor);
+        if(debug) printfv(vetor,tam_vetor);
 		printf("Run time: %lf\n", t2-t1);
     }
 

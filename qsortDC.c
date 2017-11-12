@@ -19,7 +19,7 @@ int *interleaving(int vetor[], int tam)
 
 	vetor_auxiliar = (int *)malloc(sizeof(int) * tam);
 
-	i1 = ;
+	i1 = 0;
 	i2 = tam / 2;
 
 	for (i_aux = 0; i_aux < tam; i_aux++) {
@@ -59,7 +59,7 @@ int my_father(int my_rank){
 
 int main(int argc, char** argv)
 {
-    int my_rank, proc_n;
+    int my_rank, proc_n, debug=0;
 	int delta=25000 ,tam_vetor=100000;
 	double t1,t2;
     int *vetor_aux;
@@ -82,6 +82,8 @@ int main(int argc, char** argv)
 			tam_vetor = atoi(argv[i+1]);
 			i++;
 		}
+		if(!strcmp(argv[i],"-d"))
+            debug = 1;
 	}
 
     if (my_rank != 0)
@@ -121,6 +123,7 @@ int main(int argc, char** argv)
     else
 	{
 		t2 = MPI_Wtime();
+		if(debug) printfv(vetor,tam_vetor);
 		printf("Run time: %lf\n", t2-t1);
 	}
 
