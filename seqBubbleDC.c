@@ -8,9 +8,7 @@ Augusto Bergamin - augusto.bergamin@acad.pucrs.br
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define VETOR_SIZE 100
-#define DELTA 30
+#include <time.h>
 
 
 void printfv(int *vetor, int tam_vetor){
@@ -51,15 +49,26 @@ void bs(int n, int * vetor)
 int main(int argc, char** argv){
     int tam_vetor;
     int *vetor;
+    clock_t t1, t2;
 
-    tam_vetor = VETOR_SIZE; // defino tamanho inicial do vetor
+    int i;
+	for(i=0; i<argc; i++)
+	{
+		if(!strcmp(argv[i],"-size"))
+		{
+			tam_vetor = atoi(argv[i+1]);
+			i++;
+		}
+	}
+
     vetor = malloc (tam_vetor*sizeof(int)); //aloco um vetor com este tamanho
     Inicializa(vetor,tam_vetor);
 
+    t1 = clock();
     bs(tam_vetor,vetor);
+    t2 = clock();
 
-    printfv(vetor,100); // pai imprime o vetor
-    printf("DONE");
+    printf("Run time: %lf\n", (double)(t2-t1)/CLOCKS_PER_SEC);
 
     return 0;
     }
