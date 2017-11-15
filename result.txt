@@ -1,0 +1,40 @@
+Qsort 100000
+Run time: 0.006221
+Run time: 0.009339
+Run time: 0.011170
+Run time: 0.011388
+Run time: 0.019329
+Run time: 0.018272
+Qsort_modified 100000
+Run time: 0.006902
+Run time: 0.006167
+Run time: 0.008187
+Run time: 0.008920
+Run time: 0.011301
+Qsort 1000000
+Run time: 0.076072
+Run time: 0.068666
+Run time: 0.066773
+Run time: 0.069296
+Run time: 0.084547
+Run time: 0.089242
+Qsort_modified 1000000
+Run time: 0.075287
+Run time: 0.042965
+Run time: 0.041184
+Run time: 0.049618
+Run time: 0.056978
+Bsort 100000
+Run time: 42.663511
+Run time: 11.199211
+Run time: 2.841806
+Run time: 0.801217
+Run time: 0.377944
+Run time: 0.251108
+Bsort_modified 100000
+Run time: 42.666460
+Run time: 4.974504
+Run time: 0.923636
+Run time: 0.264975
+Run time: 0.130114
+Bsort 1000000
